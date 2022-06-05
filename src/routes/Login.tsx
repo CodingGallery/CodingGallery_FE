@@ -2,10 +2,13 @@ import React from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { useForm } from "react-hook-form";
+import axios from "axios";
 
 const Background = styled.div`
   display: flex;
+  flex-direction: column;
   justify-content: center;
+  align-items: center;
   height: 100vh;
 `;
 
@@ -34,15 +37,19 @@ const Input = styled.input`
   font-size: 1rem;
 `;
 
-const BtnBox = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-around;
-  width: 15rem;
+const AccountBtn = styled.button`
+  margin-top: 2rem;
+  width: 10rem;
+  height: 2.5rem;
+  border-radius: 2rem;
+  border: none;
+  outline: none;
+  a {
+    color: black;
+  }
 `;
 
-const Btn = styled.button`
+const Loginbtn = styled.button`
   margin-top: 2rem;
   width: 10rem;
   height: 2.5rem;
@@ -67,9 +74,21 @@ function Login() {
     watch,
     formState: { errors },
   } = useForm();
-  const submitForm = (data: object) => {
+  const submitForm = async (data: object) => {
+    axios
+      .post("https://reqres.in/api/users", {
+        email: "morpheus",
+        password: "leader",
+      })
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
     console.log(data);
   };
+
   return (
     <Background>
       <LoginForm onSubmit={handleSubmit(submitForm)}>
@@ -93,15 +112,13 @@ function Login() {
             이메일 혹은 비밀번호를 확인해주세요<div className=""></div>
           </AlertText>
         )}
-        <BtnBox>
-          {/*DB의 로그인 정보와 같으면 홈으로 이동 그렇지 않으면 에러 렌더링*/}
-          <Btn>로그인</Btn>
-          <Btn>
-            <Link to="/account">회원가입</Link>
-          </Btn>
-        </BtnBox>
+        {/*DB의 로그인 정보와 같으면 홈으로 이동 그렇지 않으면 에러 렌더링*/}
+        <Loginbtn>로그인</Loginbtn>
         {/*로그인 시 에러가 발생하면 경고창을 띄울 예정*/}
       </LoginForm>
+      <AccountBtn>
+        <Link to="/account">회원가입</Link>
+      </AccountBtn>
     </Background>
   );
 }
