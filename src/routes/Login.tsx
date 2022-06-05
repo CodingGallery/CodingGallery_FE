@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import { useForm } from "react-hook-form";
+import { useForm, SubmitHandler } from "react-hook-form";
 import axios from "axios";
 
 const Background = styled.div`
@@ -67,18 +67,23 @@ const AlertText = styled.p`
   margin: 0.4rem 0;
 `;
 
+interface ILoginData {
+  email: string;
+  password: string;
+}
+
 function Login() {
   const {
     handleSubmit,
     register,
     watch,
     formState: { errors },
-  } = useForm();
-  const submitForm = async (data: object) => {
+  } = useForm<ILoginData>();
+  const onFormSubmit = async (data: ILoginData) => {
     axios
       .post("https://reqres.in/api/users", {
-        email: "morpheus",
-        password: "leader",
+        email: data.email,
+        password: data.password,
       })
       .then((response) => {
         console.log(response);
@@ -91,7 +96,7 @@ function Login() {
 
   return (
     <Background>
-      <LoginForm onSubmit={handleSubmit(submitForm)}>
+      <LoginForm onSubmit={handleSubmit(onFormSubmit)}>
         <LoginTitle>로그인</LoginTitle>
         <Input
           placeholder="이메일"
