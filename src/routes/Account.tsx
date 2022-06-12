@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import styled from "styled-components";
+import imageCompression from "browser-image-compression";
 
 const Background = styled.div`
   display: flex;
@@ -132,7 +133,8 @@ function Account() {
     fileInputRef.current.click();
   };
   const onFileChange = (event: any) => {
-    const file = event.target.files[0];
+    // compress 변수 안에 이미지를 넣어 압축 후 setImage에 file 할당
+    const file: any = actionImgCompress(event.target.files[0]);
     if (file.type.substr(0, 5) === "image") {
       setImage(file);
     } else {
@@ -140,9 +142,47 @@ function Account() {
     }
   };
 
+  // imgCompression 라이브러리를 사용하여 Compress 변수 생성
+  const actionImgCompress = async (fileSrc: any) => {
+    const options = {
+      maxSizeMB: 0.2,
+      maxWidthOrHeight: 1920,
+      useWebWorker: true,
+    };
+    try {
+      // 압축 결과
+      const compressedFile = await imageCompression(fileSrc, options);
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreview(reader.result as string);
+      };
+      reader.readAsDataURL(compressedFile);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  console.log(preview);
+
   const submitForm = (data: object) => {
     console.log(data);
   };
+
+  // const onFormSubmit = async (data: ILoginData) => {
+  //   axios
+  //     .post(`https://reqres.in/api/users`, {
+  //       email: data.email,
+  //       password: data.password,
+  //     })
+  //     .then((response) => {
+  //       console.log(response);
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //     });
+  //   console.log(data);
+  // };
 
   return (
     <Background>
@@ -185,7 +225,7 @@ function Account() {
             required: true,
             maxLength: 15,
             minLength: 8,
-            // validate로 password 값을
+            // validate로 password 값을 가져옴
             validate: (value) => value === password.current,
           })}
         />

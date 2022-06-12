@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -72,6 +72,14 @@ interface ILoginData {
   password: string;
 }
 
+interface ITestData {
+  avatar: string;
+  email: string;
+  first_name: string;
+  id: number;
+  ast_name: string;
+}
+
 function Login() {
   const {
     handleSubmit,
@@ -79,20 +87,52 @@ function Login() {
     watch,
     formState: { errors },
   } = useForm<ILoginData>();
+
+  const [isLogin, setIsLogin] = useState(false);
+
+  //   "email": "george.bluth@reqres.in",
+  //   "first_name": "George",
+
   const onFormSubmit = async (data: ILoginData) => {
     axios
-      .post("https://reqres.in/api/users", {
+      .post(`https://reqres.in/api/users`, {
         email: data.email,
-        password: data.password,
+        first_name: data.password,
       })
-      .then((response) => {
-        console.log(response);
-      })
-      .catch((error) => {
-        console.log(error);
+      .then((res) => {
+        console.log(res);
+        if (res.data.email === undefined) {
+          console.log("============= 없는 계정");
+        } else if (
+          res.data.email === true &&
+          res.data.first_name === undefined
+        ) {
+          console.log("========== 비번이 틀린듯");
+        } else if (
+          res.data.email === data.email &&
+          res.data.first_name === data.password
+        ) {
+          console.log("=========== 로그인 성공");
+        }
       });
-    console.log(data);
   };
+
+  // useEffect(() => {
+  //   axios
+  //     .get("https://reqres.in/api/users")
+  //     .then((res) => console.log(res))
+  //     .catch();
+  // }, []);
+
+  // const email = watch("email");
+
+  // const [users, setUsers] = useState<ITestData[]>([]);
+
+  // const usersEmails = users.map((a) => {
+  //   return a.email;
+  // });
+
+  // console.log(usersEmails, email);
 
   return (
     <Background>
@@ -113,9 +153,7 @@ function Login() {
           })}
         />
         {(errors.password || errors.email) && (
-          <AlertText>
-            이메일 혹은 비밀번호를 확인해주세요<div className=""></div>
-          </AlertText>
+          <AlertText>이메일 혹은 비밀번호를 확인해주세요</AlertText>
         )}
         {/*DB의 로그인 정보와 같으면 홈으로 이동 그렇지 않으면 에러 렌더링*/}
         <Loginbtn>로그인</Loginbtn>
