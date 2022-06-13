@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import styled from "styled-components";
 import imageCompression from "browser-image-compression";
+import axios from "axios";
 
 const Background = styled.div`
   display: flex;
@@ -86,6 +87,7 @@ const UploadImgBtn = styled.button`
   background-color: #ffffffb9;
   border-radius: 1rem;
   font-size: 1.1rem;
+  cursor: pointer;
 `;
 const UploadImgInput = styled.input`
   display: none;
@@ -96,6 +98,14 @@ const PreviewImg = styled.img`
   height: 8rem;
   border-radius: 1rem;
 `;
+
+// interface ILoginData {
+//   email: string;
+//   password: string;
+//   comfirmPassword: string;
+//   name: string;
+
+// }
 
 function Account() {
   /*useRef를 input에 사용시 Type은 MutableRefObject를 사용*/
@@ -112,34 +122,15 @@ function Account() {
   password.current = watch("password");
 
   // ImageRendering useState
-  const [image, setImage] = useState<File | null>();
   const [preview, setPreview] = useState<string | null>();
-
-  // ImageRendering useEffect
-  useEffect(() => {
-    if (image) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreview(reader.result as string);
-      };
-      reader.readAsDataURL(image);
-    } else {
-      setPreview(null);
-    }
-  }, [image]);
 
   const onFileHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     fileInputRef.current.click();
   };
   const onFileChange = (event: any) => {
-    // compress 변수 안에 이미지를 넣어 압축 후 setImage에 file 할당
-    const file: any = actionImgCompress(event.target.files[0]);
-    if (file.type.substr(0, 5) === "image") {
-      setImage(file);
-    } else {
-      setImage(null);
-    }
+    // input 파일을 압축 해준다.
+    actionImgCompress(event.target.files[0]);
   };
 
   // imgCompression 라이브러리를 사용하여 Compress 변수 생성
@@ -163,30 +154,28 @@ function Account() {
     }
   };
 
-  console.log(preview);
-
-  const submitForm = (data: object) => {
+  const onFormSubmit = async (data: any) => {
+    axios
+      .post(`https://reqres.in/api/users`, {
+        email: data.email,
+        password: data.password,
+        name: data.name,
+        profileImg: preview,
+      })
+      .then((response: any) => {
+        console.log(response);
+      })
+      .catch((error: any) => {
+        console.log(error);
+      });
     console.log(data);
   };
 
-  // const onFormSubmit = async (data: ILoginData) => {
-  //   axios
-  //     .post(`https://reqres.in/api/users`, {
-  //       email: data.email,
-  //       password: data.password,
-  //     })
-  //     .then((response) => {
-  //       console.log(response);
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //     });
-  //   console.log(data);
-  // };
+  console.log(preview);
 
   return (
     <Background>
-      <AccountForm onSubmit={handleSubmit(submitForm)}>
+      <AccountForm onSubmit={handleSubmit(onFormSubmit)}>
         <AccountTitle>회원가입</AccountTitle>
         <Input
           placeholder="이메일"
@@ -263,16 +252,17 @@ function Account() {
         <ReUploadText>재업로드를 원하시면 한번 더 클릭하세요.</ReUploadText>
         {preview ? (
           // 이미지를 변경 하고 싶을 때 다시 클릭하면 null 값으로 변경
-          <PreviewImg src={preview} onClick={() => setImage(null)} />
+          <PreviewImg src={preview} onClick={() => setPreview(null)} />
         ) : (
           <UploadImgBtn onClick={onFileHandler}>파일 업로드</UploadImgBtn>
         )}
         <UploadImgInput
           type="file"
           accept="image/*"
+          {...(register("profileImg"), {})}
           ref={fileInputRef}
           onChange={onFileChange}
-        ></UploadImgInput>
+        />
         <BtnBox>
           <Btn type="submit">회원가입 완료</Btn>
         </BtnBox>

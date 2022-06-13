@@ -47,6 +47,7 @@ const AccountBtn = styled.button`
   a {
     color: black;
   }
+  cursor: pointer;
 `;
 
 const Loginbtn = styled.button`
@@ -59,6 +60,7 @@ const Loginbtn = styled.button`
   a {
     color: black;
   }
+  cursor: pointer;
 `;
 
 const AlertText = styled.p`
@@ -70,14 +72,6 @@ const AlertText = styled.p`
 interface ILoginData {
   email: string;
   password: string;
-}
-
-interface ITestData {
-  avatar: string;
-  email: string;
-  first_name: string;
-  id: number;
-  ast_name: string;
 }
 
 function Login() {
@@ -159,9 +153,9 @@ function Login() {
         <Loginbtn>로그인</Loginbtn>
         {/*로그인 시 에러가 발생하면 경고창을 띄울 예정*/}
       </LoginForm>
-      <AccountBtn>
-        <Link to="/account">회원가입</Link>
-      </AccountBtn>
+      <Link to="/account">
+        <AccountBtn>회원가입</AccountBtn>
+      </Link>
     </Background>
   );
 }
