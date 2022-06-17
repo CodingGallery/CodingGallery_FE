@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { useForm, SubmitHandler } from "react-hook-form";
 import axios from "axios";
+import { useDispatch } from "react-redux";
+import { loginUser } from "../actions/user_action";
 
 const Background = styled.div`
   display: flex;
@@ -75,6 +77,8 @@ interface ILoginData {
 }
 
 function Login() {
+  const dispatch = useDispatch();
+
   const {
     handleSubmit,
     register,
@@ -82,38 +86,32 @@ function Login() {
     formState: { errors },
   } = useForm<ILoginData>();
 
-  const [isLogin, setIsLogin] = useState(false);
-
-  //   "email": "george.bluth@reqres.in",
-  //   "first_name": "George",
-
   const onFormSubmit = async (data: ILoginData) => {
-    axios
-      .post(`https://reqres.in/api/users`, {
-        email: data.email,
-        first_name: data.password,
-      })
-      .then((res) => {
-        console.log(res);
-        if (res.data.email === undefined) {
-          console.log("============= 없는 계정");
-        } else if (
-          res.data.email === true &&
-          res.data.first_name === undefined
-        ) {
-          console.log("========== 비번이 틀린듯");
-        } else if (
-          res.data.email === data.email &&
-          res.data.first_name === data.password
-        ) {
-          console.log("=========== 로그인 성공");
-        }
-      });
+    let body = {
+      email: data.email,
+      password: data.password,
+    };
+
+    axios.post(`/api/users/login`, body).then((res) => {
+      console.log(res);
+      if (res.data.email === undefined) {
+        console.log("============= 없는 계정");
+      } else if (res.data.email === true && res.data.password === undefined) {
+        console.log("========== 비번이 틀린듯");
+      } else if (
+        res.data.email === data.email &&
+        res.data.password === data.password
+      ) {
+        console.log("=========== 로그인 성공");
+      }
+
+      dispatch(loginUser(body));
+    });
   };
 
   // useEffect(() => {
   //   axios
-  //     .get("https://reqres.in/api/users")
+  //     .get("/api/users/login")
   //     .then((res) => console.log(res))
   //     .catch();
   // }, []);
