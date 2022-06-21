@@ -4,9 +4,7 @@ import { Provider } from "react-redux";
 import { applyMiddleware, createStore } from "redux";
 import promiseMiddleware from "redux-promise";
 import ReduxThunk from "redux-thunk";
-import Reducer from "./reducer/reducer";
-
-// import store from "./Store";
+import Reducer from "./reducer/store";
 
 // Import Routes
 import Home from "./routes/Home";

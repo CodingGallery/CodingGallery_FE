@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { useForm, SubmitHandler } from "react-hook-form";
 import axios from "axios";
-import { useDispatch } from "react-redux";
-import { loginUser } from "../actions/user_action";
+import { useDispatch, useSelector } from "react-redux";
+import { LOGIN_USER, LOGOUT_USER } from "../reducer/user_reducer";
 
 const Background = styled.div`
   display: flex;
@@ -78,7 +78,7 @@ interface ILoginData {
 
 function Login() {
   const dispatch = useDispatch();
-
+  const currentState: any = useSelector((state) => state);
   const {
     handleSubmit,
     register,
@@ -92,39 +92,26 @@ function Login() {
       password: data.password,
     };
 
-    axios.post(`/api/users/login`, body).then((res) => {
-      console.log(res);
-      if (res.data.email === undefined) {
-        console.log("============= 없는 계정");
-      } else if (res.data.email === true && res.data.password === undefined) {
-        console.log("========== 비번이 틀린듯");
-      } else if (
-        res.data.email === data.email &&
-        res.data.password === data.password
-      ) {
-        console.log("=========== 로그인 성공");
-      }
-
-      dispatch(loginUser(body));
-    });
+    axios
+      .post(`/`, body)
+      .then((res) => {
+        if (res.data.email === undefined) {
+          console.log("============= 없는 계정");
+        } else if (res.data.email === true && res.data.password === undefined) {
+          console.log("========== 비번이 틀린듯");
+        } else if (
+          res.data.email === data.email &&
+          res.data.password === data.password
+        ) {
+          console.log("=========== 로그인 성공");
+          dispatch({ type: LOGIN_USER });
+        }
+      })
+      .catch((error) => {
+        dispatch({ type: LOGOUT_USER });
+      });
   };
-
-  // useEffect(() => {
-  //   axios
-  //     .get("/api/users/login")
-  //     .then((res) => console.log(res))
-  //     .catch();
-  // }, []);
-
-  // const email = watch("email");
-
-  // const [users, setUsers] = useState<ITestData[]>([]);
-
-  // const usersEmails = users.map((a) => {
-  //   return a.email;
-  // });
-
-  // console.log(usersEmails, email);
+  console.log(currentState.user);
 
   return (
     <Background>
@@ -147,6 +134,9 @@ function Login() {
         {(errors.password || errors.email) && (
           <AlertText>이메일 혹은 비밀번호를 확인해주세요</AlertText>
         )}
+        {currentState.user === false ? (
+          <AlertText>이메일 혹은 비밀번호를 확인해주세요</AlertText>
+        ) : null}
         {/*DB의 로그인 정보와 같으면 홈으로 이동 그렇지 않으면 에러 렌더링*/}
         <Loginbtn>로그인</Loginbtn>
         {/*로그인 시 에러가 발생하면 경고창을 띄울 예정*/}

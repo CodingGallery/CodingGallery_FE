@@ -1,10 +1,18 @@
-import { LOGIN_USER } from "../actions/user_action";
+const isloggedIn = null;
 
-export default function user(state = {}, action: any) {
+// action
+export const LOGIN_USER = "LOGIN_USER";
+export const LOGOUT_USER = "LOGOUT_USER";
+export const ADMIN_USER = "ADMIN_USER";
+
+export default function user(state: boolean | null = isloggedIn, action: any) {
   switch (action.type) {
     case LOGIN_USER:
-      return { ...state, loginSuccess: action.payload };
-
+      return (state = true);
+    case LOGOUT_USER:
+      return (state = false);
+    case ADMIN_USER:
+      return (state = null);
     default:
       return state;
   }
