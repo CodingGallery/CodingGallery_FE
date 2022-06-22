@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { useForm, SubmitHandler } from "react-hook-form";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
-import { LOGIN_USER, LOGOUT_USER } from "../reducer/user_reducer";
+import { LOGIN_USER, LOGIN_FAIL } from "../reducer/user_reducer";
 
 const Background = styled.div`
   display: flex;
@@ -77,7 +77,7 @@ interface ILoginData {
 }
 
 function Login() {
-  const dispatch = useDispatch();
+  const loginDispatch = useDispatch();
   const currentState: any = useSelector((state) => state);
   const {
     handleSubmit,
@@ -88,27 +88,27 @@ function Login() {
 
   const onFormSubmit = async (data: ILoginData) => {
     let body = {
-      email: data.email,
-      password: data.password,
+      username: data.email,
+      userpassword: data.password,
     };
 
     axios
-      .post(`/`, body)
+      .post(`http://54.180.142.103/loginProc`, body)
       .then((res) => {
         if (res.data.email === undefined) {
           console.log("============= 없는 계정");
         } else if (res.data.email === true && res.data.password === undefined) {
-          console.log("========== 비번이 틀린듯");
+          console.log("========== 비번이 틀림");
         } else if (
           res.data.email === data.email &&
           res.data.password === data.password
         ) {
           console.log("=========== 로그인 성공");
-          dispatch({ type: LOGIN_USER });
+          loginDispatch({ type: LOGIN_USER });
         }
       })
       .catch((error) => {
-        dispatch({ type: LOGOUT_USER });
+        loginDispatch({ type: LOGIN_FAIL });
       });
   };
   console.log(currentState.user);

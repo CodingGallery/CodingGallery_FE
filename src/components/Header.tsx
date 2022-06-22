@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import { LOGOUT_USER } from "../reducer/user_reducer";
+import { ADMIN_USER, LOGIN_FAIL } from "../reducer/user_reducer";
 
 const NavBar = styled.header`
   display: flex;
@@ -51,8 +51,13 @@ function Header() {
   const loginDispatch = useDispatch();
 
   const onLogoutHandler = () => {
-    loginDispatch({ type: LOGOUT_USER });
+    loginDispatch({ type: LOGIN_FAIL });
   };
+
+  const onClickStateReset = () => {
+    loginDispatch({ type: ADMIN_USER });
+  };
+
   console.log(loginState.user);
 
   return (
@@ -104,7 +109,7 @@ function Header() {
             </Icon>
           ) : (
             <Icon>
-              <Link to="/login">
+              <Link to="/login" onClick={onClickStateReset}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 448 512"
