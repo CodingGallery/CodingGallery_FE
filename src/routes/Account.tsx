@@ -156,7 +156,7 @@ function Account() {
 
   const onFormSubmit = async (data: any) => {
     axios
-      .post(`/api/users/account`, {
+      .post(`https://reqres.in/api/users`, {
         email: data.email,
         password: data.password,
         name: data.name,

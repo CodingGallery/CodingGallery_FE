@@ -78,6 +78,7 @@ interface ILoginData {
 
 function Login() {
   const loginDispatch = useDispatch();
+  const navigater = useNavigate();
   const currentState: any = useSelector((state) => state);
   const {
     handleSubmit,
@@ -88,27 +89,21 @@ function Login() {
 
   const onFormSubmit = async (data: ILoginData) => {
     let body = {
-      username: data.email,
-      userpassword: data.password,
+      email: data.email,
+      password: data.password,
     };
 
     axios
-      .post(`http://54.180.142.103/loginProc`, body)
+      .post(`https://reqres.in/api/users`, [null, body])
       .then((res) => {
-        if (res.data.email === undefined) {
-          console.log("============= 없는 계정");
-        } else if (res.data.email === true && res.data.password === undefined) {
-          console.log("========== 비번이 틀림");
-        } else if (
-          res.data.email === data.email &&
-          res.data.password === data.password
-        ) {
-          console.log("=========== 로그인 성공");
-          loginDispatch({ type: LOGIN_USER });
-        }
+        console.log("로그인 성공");
+        loginDispatch({ type: LOGIN_USER });
+        console.log(res);
+        navigater("/");
       })
       .catch((error) => {
         loginDispatch({ type: LOGIN_FAIL });
+        console.log(error);
       });
   };
   console.log(currentState.user);

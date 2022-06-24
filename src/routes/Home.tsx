@@ -1,4 +1,3 @@
-import React from "react";
 import ReactFullpage from "@fullpage/react-fullpage";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
