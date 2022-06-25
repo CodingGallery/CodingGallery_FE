@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { ADMIN_USER, LOGIN_FAIL } from "../reducer/user_reducer";
 
@@ -49,12 +49,14 @@ const Icon = styled.div``;
 function Header() {
   const loginState = useSelector((state: any) => state);
   const loginDispatch = useDispatch();
+  const navigate = useNavigate();
 
   const onFailedLogin = () => {
     loginDispatch({ type: LOGIN_FAIL });
   };
 
   const onClickStateReset = () => {
+    navigate("/logout");
     loginDispatch({ type: ADMIN_USER });
   };
 

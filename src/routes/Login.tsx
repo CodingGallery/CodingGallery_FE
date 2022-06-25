@@ -89,12 +89,13 @@ function Login() {
 
   const onFormSubmit = async (data: ILoginData) => {
     let body = {
-      email: data.email,
-      password: data.password,
+      params: { email: data.email, password: data.password },
     };
 
     axios
-      .post(`https://reqres.in/api/users`, [null, body])
+      .post(`http://3.39.22.239/loginProc`, [null, body], {
+        withCredentials: true,
+      })
       .then((res) => {
         console.log("로그인 성공");
         loginDispatch({ type: LOGIN_USER });
