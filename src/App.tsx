@@ -8,6 +8,7 @@ import Header from "./components/Header";
 import Login from "./routes/Login";
 import Account from "./routes/Account";
 import Profile from "./routes/Profile";
+import Artwork from "./components/Artwork";
 
 export function App() {
   return (
@@ -19,6 +20,7 @@ export function App() {
         <Route path="/login" element={<Login />}></Route>
         <Route path="/account" element={<Account />}></Route>
         <Route path="/profile" element={<Profile />}></Route>
+        <Route path="/artwork" element={<Artwork />}></Route>
       </Routes>
     </BrowserRouter>
   );
